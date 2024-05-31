@@ -140,3 +140,5 @@ mongo_config = {
     "MONGO_PORT": MONGO_PORT,
 }
 agent.write_envfile("mongo.env", mongo_config)
+
+agent.dump_env()
