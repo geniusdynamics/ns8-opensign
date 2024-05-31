@@ -23,7 +23,7 @@ ExecStartPre=-runagent discover-smarthost
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --cidfile %t/opensign-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/opensign.pod-id --replace -d --name  opensign-app \
-    --volume ./apps/OpenSignServer/:/usr/src/app:Z \
+    --volume server-app:/usr/src/app:Z \
     --volume /usr/src/app/node_modules:Z \
      --env=APP_ID=${APP_ID} \
     --env=appName=${appName} \
