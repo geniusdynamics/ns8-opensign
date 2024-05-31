@@ -12,6 +12,7 @@ After=opensign.service mongo-app.service
 Environment=PODMAN_SYSTEMD_UNIT=%n
 EnvironmentFile=%S/state/environment
 EnvironmentFile=-%S/state/smarthost.env
+EnvironmentFile=-%S/state/backend.env
 WorkingDirectory=%S/state
 Restart=always
 TimeoutStopSec=70
@@ -23,7 +24,12 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --pod-id-file %t/opensign.pod-id --replace -d --name  opensign-app \
     --volume ./apps/OpenSignServer/:/usr/src/app:Z \
     --volume /usr/src/app/node_modules:Z \
-    --env=OPENSIGNSERVER_* \
+     --env=APP_ID=${APP_ID} \
+    --env=appName=${appName} \
+    --env=MASTER_KEY=${MASTER_KEY} \
+    --env=MONGODB_URI=${MONGODB_URI} \
+    --env=PARSE_MOUNT=${PARSE_MOUNT} \
+    --env=SERVER_URL=${SERVER_URL} \
     ${OPENSIGNSERVER_IMAGE} /usr/src/app/node_modules/.bin/nodemon server.js
 ExecStartPost=/usr/bin/podman exec opensign-server sed -i "s;\"mongodb\": \"mongodb://mongodb:27017/opensign\";\"mongodb\": \"mongodb://mongo-app:27017/opensign\";"
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
