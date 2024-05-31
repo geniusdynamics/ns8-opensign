@@ -13,6 +13,7 @@ Environment=PODMAN_SYSTEMD_UNIT=%n
 EnvironmentFile=%S/state/environment
 EnvironmentFile=-%S/state/smarthost.env
 EnvironmentFile=-%S/state/backend.env
+EnvironmentFile=-%S/state/mongo.env
 WorkingDirectory=%S/state
 Restart=always
 TimeoutStopSec=70
@@ -27,11 +28,11 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
      --env=APP_ID=${APP_ID} \
     --env=appName=${appName} \
     --env=MASTER_KEY=${MASTER_KEY} \
-    --env=MONGODB_URI=${MONGODB_URI} \
+    --env=MONGODB_URI="mongodb://${MONGO_INITDB_USERNAME}:${MONGO_INITDB_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_INITDB_DATABASE}" \
     --env=PARSE_MOUNT=${PARSE_MOUNT} \
     --env=SERVER_URL=${SERVER_URL} \
     ${OPENSIGNSERVER_IMAGE} /usr/src/app/node_modules/.bin/nodemon server.js
-ExecStartPost=/usr/bin/podman exec opensign-server sed -i "s;\"mongodb\": \"mongodb://mongodb:27017/opensign\";\"mongodb\": \"mongodb://mongo-app:27017/opensign\";"
+#ExecStartPost=/usr/bin/podman exec opensign-server sed -i "s;\"mongodb\": \"mongodb://mongodb:27017/opensign\";\"mongodb\": \"mongodb://mongo-app:27017/opensign\";"
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP opensign-app
 SyslogIdentifier=%u
