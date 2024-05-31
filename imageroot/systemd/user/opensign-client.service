@@ -12,6 +12,7 @@ After=opensign.service mongo-app.service opensign-server.service
 Environment=PODMAN_SYSTEMD_UNIT=%n
 EnvironmentFile=%S/state/environment
 EnvironmentFile=-%S/state/smarthost.env
+EnvironmentFile=-%S/state/frontend.env
 WorkingDirectory=%S/state
 Restart=always
 TimeoutStopSec=70
@@ -21,10 +22,13 @@ ExecStartPre=-runagent discover-smarthost
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --cidfile %t/opensign-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/opensign.pod-id --replace -d --name  opensign-app \
-    --volume ./apps/OpenSign/:/usr/app \
+    --volume ./apps/OpenSign/:/usr/app:z \
     --volume /usr/app/node_modules:z \
-    --env=OPENSIGN_* \
-    ${OPENSIGN_IMAGE} npm star
+    --env=REACT_* \
+    --env GENERATE_SOURCEMAP=${GENERATE_SOURCEMAP} \
+    --env PUBLIC_URL=${PUBLIC_URL} \
+    --env REACT_APP_SERVERURL=${REACT_APP_SERVERURL} \
+    ${OPENSIGN_IMAGE} npm start
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP opensign-app
 SyslogIdentifier=%u
