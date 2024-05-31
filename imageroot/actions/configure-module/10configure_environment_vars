@@ -35,7 +35,8 @@ frontend_config = {
     "REACT_APP_APPID": REACT_APP_APPID,
     "REACT_APP_GTM": REACT_APP_GTM,
 }
-agent.write_envfile('frontend.env', frontend_config)
+agent.write_envfile("frontend.env", frontend_config)
+
 APP_ID = data.get('APP_ID', app_id)
 appName = data.get('appName', 'NS8 Open Sign Server')
 MASTER_KEY = data.get('MASTER_KEY', app_id)
@@ -71,7 +72,7 @@ storage_config = {
     "USE_LOCAL": USE_LOCAL,
 }
 
-agent.write_envfile('storage.env', storage_config)
+agent.write_envfile("storage.env", storage_config)
 # SMTP Configuration
 rdb = agent.redis_connect(use_replica=True)
 smtp_settings = agent.get_smarthost_settings(rdb)
@@ -102,11 +103,11 @@ email_config = {
     "SMTP_ENABLE": SMTP_ENABLED,
     "SMTP_HOST": SMTP_HOST,
     "SMTP_PORT": SMTP_PORT,
-    "SMTP_USER_EMAIL":SMTP_USERNAME,
-    "SMTP_PASS": SMTP_PASSWORD,
+    "SMTP_USER_EMAIL":f'{SMTP_USERNAME}',
+    "SMTP_PASS": f'{SMTP_PASSWORD}',
 }
 
-agent.write_envfile('email.env', email_config)
+agent.write_envfile("email.env", email_config)
 
 PFX_BASE64 = data.get('PFX_BASE64', pfx)
 PASS_PHRASE = data.get('PASS_PHRASE', phrase)
@@ -131,11 +132,11 @@ MONGO_PORT = data.get('MONGO_PORT', '27017')
 
 mongo_config = {
     "MONGO_INITDB_ROOT_USERNAME": MONGO_INITDB_USERNAME,
-    "MONGO_INITDB_ROOT_PASSWORD": MONGO_INITDB_ROOT_PASSWORD,
+    "MONGO_INITDB_ROOT_PASSWORD": f'{MONGO_INITDB_ROOT_PASSWORD}',
     "MONGO_INITDB_DATABASE": MONGO_INITDB_DATABASE,
     "MONGO_INITDB_USERNAME": MONGO_INITDB_USERNAME,
-    "MONGO_INITDB_PASSWORD": MONGO_INITDB_PASSWORD,
+    "MONGO_INITDB_PASSWORD": f'{MONGO_INITDB_PASSWORD}',
     "MONGO_HOST": MONGO_HOST,
     "MONGO_PORT": MONGO_PORT,
 }
-agent.write_envfile('mongo.env', mongo_config)
+agent.write_envfile("mongo.env", mongo_config)
