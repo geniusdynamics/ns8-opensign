@@ -1,0 +1,31 @@
+#
+# Copyright (C) 2022 Nethesis S.r.l.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+[Unit]
+Description=Podman mongo-app.service
+BindsTo=opensign.service
+After=opensign.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%S/state/environment
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/mongo-app.pid %t/mongo-app.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/mongo-app.pid \
+    --cidfile %t/mongo-app.ctr-id --cgroups=no-conmon \
+    --pod-id-file %t/opensign.pod-id --replace -d --name mongo-app \
+    --volume mongo-app:/data/db:Z \
+    --volume mongo-configdb:/data/configdb:Z \
+    ${MONGO_IMAGE}
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/mongo-app.ctr-id -t 10
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/mongo-app.ctr-id
+ExecReload=/usr/bin/podman kill -s HUP mongo-app
+SyslogIdentifier=%u
+PIDFile=%t/mongo-app.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

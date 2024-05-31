@@ -10,14 +10,11 @@ exec 1>&2 # Redirect any output to the journal (stderr)
 
 # Prepare an initialization script that restores the dump file
 mkdir -vp initdb.d
-mv -v kickstart.sql initdb.d
+mv -v opensign.archive initdb.d
 #do the bash file to restore and exit once done
-cat - >initdb.d/zz_kickstart_restore.sh <<'EOS'
-# Print additional information:
-mysql --version
-# The script is sourced, override entrypoint args and exit:
-set -- true
-docker_temp_server_stop
+cat - >initdb.d/zz_opensign_restore.sh <<'EOS'
+mongosh --eval 'db.dropDatabase();' opensign
+mongorestore --archive=/docker-entrypoint-initdb.d/opensign.archive
 exit 0
 EOS
 
@@ -25,17 +22,13 @@ EOS
 trap 'rm -rfv initdb.d/' EXIT
 
 # we start a container to initiate a database and load the dump
-# at the end of kickstart_restore.sh the dump is loaded and 
+# at the end of opensign_restore.sh the dump is loaded and 
 # we exit the container
 podman run \
   --rm \
   --interactive \
   --network=none \
-  --volume=./initdb.d:/docker-entrypoint-initdb.d:z \
-  --volume mysql-data:/var/lib/mysql/:Z \
-  --env MARIADB_ROOT_PASSWORD=Nethesis,1234 \
-  --env MARIADB_DATABASE=kickstart \
-  --env MARIADB_USER=kickstart \
-  --env MARIADB_PASSWORD=kickstart \
+  --volume ./initdb.d:/docker-entrypoint-initdb.d:z \
+  --volume mongo-app:/data/db:Z \
   --replace --name=restore_db \
-  ${MARIADB_IMAGE}
+  ${MONGO_IMAGE}
