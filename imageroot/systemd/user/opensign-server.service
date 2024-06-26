@@ -25,7 +25,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --pod-id-file %t/opensign.pod-id --replace -d --name  opensign-app \
     --volume server-app:/usr/src/app \
     --volume /usr/src/app/node_modules \
-     --env=APP_ID=${APP_ID} \
+    --env=APP_ID=${APP_ID} \
     --env=appName=${appName} \
     --env=MASTER_KEY=${MASTER_KEY} \
     --env=MONGODB_URI="mongodb://${MONGO_INITDB_USERNAME}:${MONGO_INITDB_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_INITDB_DATABASE}" \
