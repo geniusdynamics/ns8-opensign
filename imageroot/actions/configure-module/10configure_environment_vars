@@ -14,13 +14,11 @@ import base64
 # If parsing fails, output everything to stderr
 data = json.load(sys.stdin)
 
-app_id = secrets.token_hex(12)
-phrase = secrets.token_bytes(32)
-pfx = base64.b64encode(phrase)
+
 #This is specific to you module, so you need to change it accordingly.
 # we read a json stdin {"vars1":true, "var2":"foo", "vars3": 3} and we writ it to .config/state/environment
 # Upper case to set environment variable and minor case to read from stdin
-
+app_id = secrets.token_hex(12)
 PUBLIC_URL = data.get('host', '')
 GENERATE_SOURCEMAP = data.get('GENERATE_SOURCEMAP', 'false')
 REACT_APP_SERVERURL = data.get('REACT_APP_SERVERURL', '')
@@ -31,26 +29,18 @@ REACT_APP_GTM = data.get('REACT_APP_GTM', '')
 frontend_config = {
     "PUBLIC_URL": f'{PUBLIC_URL}',
     "GENERATE_SOURCEMAP": GENERATE_SOURCEMAP,
-    "REACT_APP_SERVERURL": f'https://server.{PUBLIC_URL}/api/app',
+    "REACT_APP_SERVERURL": f'https://{PUBLIC_URL}/api/app',
     "REACT_APP_APPID": REACT_APP_APPID,
     "REACT_APP_GTM": REACT_APP_GTM,
 }
 agent.write_envfile("frontend.env", frontend_config)
 
-APP_ID = data.get('APP_ID', app_id)
 appName = data.get('appName', 'NS8 Open Sign Server')
-MASTER_KEY = data.get('MASTER_KEY', app_id)
-MONGODB_URI = data.get('MONGODB_URI', '')
-PARSE_MOUNT = data.get('PARSE_MOUNT', '/app')
-SERVER_URL = data.get('SERVER_URL', '')
+SERVER_URL = f'https://{PUBLIC_URL}/api/app'
 
 # Backend Configuration
 backend_config = {
-    "APP_ID": APP_ID,
     "appName": appName,
-    "MASTER_KEY": MASTER_KEY,
-    "MONGODB_URI": MONGODB_URI,
-    "PARSE_MOUNT": PARSE_MOUNT,
     "SERVER_URL": SERVER_URL,
 }
 agent.write_envfile('backend.env', backend_config)
@@ -109,36 +99,11 @@ email_config = {
 
 agent.write_envfile("email.env", email_config)
 
-PFX_BASE64 = data.get('PFX_BASE64', pfx)
-PASS_PHRASE = data.get('PASS_PHRASE', phrase)
-# PFX Configuration
-pfx_config = {
-    "PFX_BASE64": PFX_BASE64,
-    "PASS_PHRASE": PASS_PHRASE,
-}
-agent.write_envfile('pfx.env', pfx_config)
+
 # Make sure everything is saved inside the environment file
 # just before starting systemd unit
 #agent.dump_env()
 
-#DATABASE CONFIGURATIONS
-MONGO_INITDB_ROOT_USERNAME = data.get('MONGO_INITDB_ROOT_USERNAME', 'root')
-MONGO_INITDB_ROOT_PASSWORD = data.get('MONGO_INITDB_ROOT_PASSWORD', 'Op3nSignNS8')
-MONGO_INITDB_DATABASE = data.get('MONGO_INITDB_DATABASE', 'opensign')
-MONGO_INITDB_USERNAME = data.get('MONGO_INITDB_USERNAME', 'opensign')
-MONGO_INITDB_PASSWORD = data.get('MONGO_INITDB_PASSWORD', 'OpensignNS8')
-MONGO_HOST = data.get('MONGO_HOST', 'localhost')
-MONGO_PORT = data.get('MONGO_PORT', '27017')
 
-mongo_config = {
-    "MONGO_INITDB_ROOT_USERNAME": MONGO_INITDB_USERNAME,
-    "MONGO_INITDB_ROOT_PASSWORD": f'{MONGO_INITDB_ROOT_PASSWORD}',
-    "MONGO_INITDB_DATABASE": MONGO_INITDB_DATABASE,
-    "MONGO_INITDB_USERNAME": MONGO_INITDB_USERNAME,
-    "MONGO_INITDB_PASSWORD": f'{MONGO_INITDB_PASSWORD}',
-    "MONGO_HOST": MONGO_HOST,
-    "MONGO_PORT": MONGO_PORT,
-}
-agent.write_envfile("mongo.env", mongo_config)
 
 agent.dump_env()
