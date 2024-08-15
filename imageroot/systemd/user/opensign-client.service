@@ -31,7 +31,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --env-file=%S/state/frontend.env \
     --env-file=%S/state/storage.env \
     --env-file=%S/state/email.env \
-    ${OPENSIGN_IMAGE} npm start
+    ${OPENSIGN_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP opensign-app
 SyslogIdentifier=%u

@@ -32,7 +32,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --env-file=%S/state/frontend.env \
     --env-file=%S/state/storage.env \
     --env-file=%S/state/email.env \
-    ${OPENSIGNSERVER_IMAGE} /usr/src/app/node_modules/.bin/nodemon server.js
+    ${OPENSIGNSERVER_IMAGE}
 #ExecStartPost=/usr/bin/podman exec opensign-server sed -i "s;\"mongodb\": \"mongodb://mongodb:27017/opensign\";\"mongodb\": \"mongodb://mongo-app:27017/opensign\";"
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP opensign-app
