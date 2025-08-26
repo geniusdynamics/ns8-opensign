@@ -20,7 +20,6 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/mongo-app.pid \
     --env-file=%S/state/mongo.env \
     --env=MONGO_* \
     --volume mongo-app:/data/db:Z \
-    --volume mongo-configdb:/data/configdb:Z \
     ${MONGO_IMAGE}
 
 
