@@ -10,47 +10,49 @@ import sys
 import agent
 import secrets
 import base64
+
 # Try to parse the stdin as JSON.
 # If parsing fails, output everything to stderr
 data = json.load(sys.stdin)
 
 
-#This is specific to you module, so you need to change it accordingly.
+# This is specific to you module, so you need to change it accordingly.
 # we read a json stdin {"vars1":true, "var2":"foo", "vars3": 3} and we writ it to .config/state/environment
 # Upper case to set environment variable and minor case to read from stdin
 app_id = secrets.token_hex(12)
-PUBLIC_URL = data.get('host', '')
-GENERATE_SOURCEMAP = data.get('GENERATE_SOURCEMAP', 'false')
-REACT_APP_SERVERURL = data.get('REACT_APP_SERVERURL', '')
-REACT_APP_APPID = data.get('REACT_APP_APPID', app_id)
-REACT_APP_GTM = data.get('REACT_APP_GTM', '')
+PUBLIC_URL = data.get("host", "")
+GENERATE_SOURCEMAP = data.get("GENERATE_SOURCEMAP", "false")
+REACT_APP_SERVERURL = data.get("REACT_APP_SERVERURL", "")
+REACT_APP_APPID = data.get("REACT_APP_APPID", app_id)
+REACT_APP_GTM = data.get("REACT_APP_GTM", "")
+SERVER_URL = f"https://server.{PUBLIC_URL}/api/app"
+
 # Open sign Frontend
 # Frontend Configuration
 frontend_config = {
-    "PUBLIC_URL": f'{PUBLIC_URL}',
+    "PUBLIC_URL": f"{PUBLIC_URL}",
     "GENERATE_SOURCEMAP": GENERATE_SOURCEMAP,
-    "REACT_APP_SERVERURL": f'https://{PUBLIC_URL}/api/app',
+    "REACT_APP_SERVERURL": SERVER_URL,
     "REACT_APP_APPID": REACT_APP_APPID,
     "REACT_APP_GTM": REACT_APP_GTM,
 }
 agent.write_envfile("frontend.env", frontend_config)
 
-appName = data.get('appName', 'NS8 Open Sign Server')
-SERVER_URL = f'https://{PUBLIC_URL}/api/app'
+appName = data.get("appName", "NS8 Open Sign Server")
 
 # Backend Configuration
 backend_config = {
     "appName": appName,
     "SERVER_URL": SERVER_URL,
 }
-agent.write_envfile('backend.env', backend_config)
-DO_SPACE = data.get('DO_SPACE', '')
-DO_ENDPOINT = data.get('DO_ENDPOINT', '')
-DO_BASEURL = data.get('DO_BASEURL', '')
-DO_ACCESS_KEY_ID = data.get('DO_ACCESS_KEY_ID', '')
-DO_SECRET_ACCESS_KEY = data.get('DO_SECRET_ACCESS_KEY', '')
-DO_REGION = data.get('DO_REGION', '')
-USE_LOCAL = data.get('USE_LOCAL', '')
+agent.write_envfile("backend.env", backend_config)
+DO_SPACE = data.get("DO_SPACE", "")
+DO_ENDPOINT = data.get("DO_ENDPOINT", "")
+DO_BASEURL = data.get("DO_BASEURL", "")
+DO_ACCESS_KEY_ID = data.get("DO_ACCESS_KEY_ID", "")
+DO_SECRET_ACCESS_KEY = data.get("DO_SECRET_ACCESS_KEY", "")
+DO_REGION = data.get("DO_REGION", "")
+USE_LOCAL = data.get("USE_LOCAL", "")
 # Storage Configuration
 storage_config = {
     "DO_SPACE": DO_SPACE,
@@ -68,33 +70,33 @@ rdb = agent.redis_connect(use_replica=True)
 smtp_settings = agent.get_smarthost_settings(rdb)
 
 ## Set the default values
-SMTP_HOST=smtp_settings['host']
+SMTP_HOST = smtp_settings["host"]
 # OPTIONAL: Defines the port to use for sending emails.
-SMTP_PORT=smtp_settings['port']
+SMTP_PORT = smtp_settings["port"]
 # OPTIONAL: Defines the username to use with the SMTP server.
-SMTP_USERNAME=smtp_settings['username']
+SMTP_USERNAME = smtp_settings["username"]
 # OPTIONAL: Defines the password to use with the SMTP server.
-SMTP_PASSWORD=smtp_settings['password']
-SMTP_FROM_NAME=f'"Documenso" <{smtp_settings["username"]}>'
+SMTP_PASSWORD = smtp_settings["password"]
+SMTP_FROM_NAME = f'"Documenso" <{smtp_settings["username"]}>'
 # REQUIRED: Defines the email address to use as the from address.
-SMTP_FROM_ADDRESS=smtp_settings['username']
-SMTP_ENCRYPTION=smtp_settings['tls_verify']
-SMTP_ENABLED=smtp_settings['enabled']
+SMTP_FROM_ADDRESS = smtp_settings["username"]
+SMTP_ENCRYPTION = smtp_settings["tls_verify"]
+SMTP_ENABLED = smtp_settings["enabled"]
 
-MAILGUN_API_KEY = data.get('MAILGUN_API_KEY', '')
-MAILGUN_DOMAIN = data.get('MAILGUN_DOMAIN', '')
-MAILGUN_SENDER = data.get('MAILGUN_SENDER', '')
+MAILGUN_API_KEY = data.get("MAILGUN_API_KEY", "")
+MAILGUN_DOMAIN = data.get("MAILGUN_DOMAIN", "")
+MAILGUN_SENDER = data.get("MAILGUN_SENDER", "")
 
 # Email Configuration
 email_config = {
     "MAILGUN_API_KEY": MAILGUN_API_KEY,
     "MAILGUN_DOMAIN": MAILGUN_DOMAIN,
-    "MAILGUN_SENDER":MAILGUN_SENDER,
+    "MAILGUN_SENDER": MAILGUN_SENDER,
     "SMTP_ENABLE": SMTP_ENABLED,
     "SMTP_HOST": SMTP_HOST,
     "SMTP_PORT": SMTP_PORT,
-    "SMTP_USER_EMAIL":f'{SMTP_USERNAME}',
-    "SMTP_PASS": f'{SMTP_PASSWORD}',
+    "SMTP_USER_EMAIL": f"{SMTP_USERNAME}",
+    "SMTP_PASS": f"{SMTP_PASSWORD}",
 }
 
 agent.write_envfile("email.env", email_config)
@@ -102,8 +104,7 @@ agent.write_envfile("email.env", email_config)
 
 # Make sure everything is saved inside the environment file
 # just before starting systemd unit
-#agent.dump_env()
-
+# agent.dump_env()
 
 
 agent.dump_env()

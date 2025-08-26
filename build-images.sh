@@ -43,9 +43,9 @@ buildah add "${container}" ui/dist /ui
 # tcp-ports-demand=1 number of tcp Port to reserve , 1 is the minimum, can be udp or tcp
 buildah config --entrypoint=/ \
 	--label="org.nethserver.authorizations=traefik@node:routeadm" \
-	--label="org.nethserver.tcp-ports-demand=1" \
+	--label="org.nethserver.tcp-ports-demand=2" \
 	--label="org.nethserver.rootfull=0" \
-	--label="org.nethserver.images=docker.io/mongo:7.0.9 docker.io/opensign/opensign:main docker.io/opensign/opensignserver:main" \
+	--label="org.nethserver.images=docker.io/mongo:latest docker.io/opensign/opensign:main docker.io/opensign/opensignserver:main" \
 	"${container}"
 # Commit the image
 buildah commit "${container}" "${repobase}/${reponame}"
