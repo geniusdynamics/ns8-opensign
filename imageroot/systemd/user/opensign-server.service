@@ -10,28 +10,25 @@ After=opensign.service mongo-app.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-EnvironmentFile=%S/state/environment
-EnvironmentFile=-%S/state/smarthost.env
-EnvironmentFile=-%S/state/backend.env
-EnvironmentFile=-%S/state/mongo.env
-WorkingDirectory=%S/state
+EnvironmentFile=%E/state/environment
+EnvironmentFile=-%E/state/backend.env
+EnvironmentFile=-%E/state/mongo.env
+WorkingDirectory=%E/state
 Restart=always
-TimeoutStopSec=70
+TimeoutStopSec=200
 ExecStartPre=/bin/mkdir -p tmp
 ExecStartPre=/bin/rm -f %t/opensign-app.pid %t/opensign-app.ctr-id
-ExecStartPre=-runagent discover-smarthost
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --cidfile %t/opensign-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/opensign.pod-id --replace -d --name  opensign-app \
     --volume server-app:/usr/src/app/files:Z \
-    --volume /usr/src/app/node_modules \
-    --env-file=%S/state/mongo.env \
-    --env-file=%S/state/backend.env \
-    --env-file=%S/state/backend-db.env \
-    --env-file=%S/state/pfx.env \
-    --env-file=%S/state/frontend.env \
-    --env-file=%S/state/storage.env \
-    --env-file=%S/state/email.env \
+    --env-file=%E/state/mongo.env \
+    --env-file=%E/state/backend.env \
+    --env-file=%E/state/backend-db.env \
+    --env-file=%E/state/pfx.env \
+    --env-file=%E/state/frontend.env \
+    --env-file=%E/state/storage.env \
+    --env-file=%E/state/email.env \
     ${OPENSIGNSERVER_IMAGE}
 #ExecStartPost=/usr/bin/podman exec opensign-server sed -i "s;\"mongodb\": \"mongodb://mongodb:27017/opensign\";\"mongodb\": \"mongodb://mongo-app:27017/opensign\";"
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
