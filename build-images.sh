@@ -14,6 +14,9 @@ images=()
 repobase="${REPOBASE:-ghcr.io/geniusdynamics}"
 # Configure the image name
 reponame="opensign"
+# Node.js 25+ no longer ships Corepack, install it from npm
+# renovate: datasource=npm packageName=corepack
+corepack_version=0.36.0
 
 # Create a new empty container image
 container=$(buildah from scratch)
@@ -21,7 +24,8 @@ container=$(buildah from scratch)
 # Reuse existing nodebuilder-opensign container, to speed up builds
 if ! buildah containers --format "{{.ContainerName}}" | grep -q nodebuilder-opensign; then
 	echo "Pulling NodeJS runtime..."
-	buildah from --name nodebuilder-opensign -v "${PWD}:/usr/src:Z" docker.io/library/node:lts
+	buildah from --name nodebuilder-opensign -v "${PWD}:/usr/src:Z" docker.io/library/node:26.13.0-slim
+	buildah run nodebuilder-opensign sh -c "npm install -g corepack@${corepack_version} && corepack enable"
 fi
 
 echo "Build static UI files with node..."
@@ -45,7 +49,7 @@ buildah config --entrypoint=/ \
 	--label="org.nethserver.authorizations=traefik@node:routeadm" \
 	--label="org.nethserver.tcp-ports-demand=2" \
 	--label="org.nethserver.rootfull=0" \
-	--label="org.nethserver.images=docker.io/mongo:latest docker.io/opensign/opensign:main docker.io/opensign/opensignserver:main" \
+	--label="org.nethserver.images=docker.io/mongo:9.0.8 docker.io/opensign/opensign:main docker.io/opensign/opensignserver:main" \
 	"${container}"
 # Commit the image
 buildah commit "${container}" "${repobase}/${reponame}"
