@@ -20,15 +20,13 @@ ExecStartPre=/bin/rm -f %t/opensign-app.pid %t/opensign-app.ctr-id
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/opensign-app.pid \
     --cidfile %t/opensign-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/opensign.pod-id --replace -d --name  opensign-app \
-    --volume client-app:/usr/app \
-    --volume /usr/app/node_modules \
-    --env-file=%E/state/mongo.env \
-    --env-file=%E/state/backend.env \
-    --env-file=%E/state/backend-db.env \
-    --env-file=%E/state/pfx.env \
-    --env-file=%E/state/frontend.env \
-    --env-file=%E/state/storage.env \
-    --env-file=%E/state/email.env \
+    --env-file=%S/state/mongo.env \
+    --env-file=%S/state/backend.env \
+    --env-file=%S/state/backend-db.env \
+    --env-file=%S/state/pfx.env \
+    --env-file=%S/state/frontend.env \
+    --env-file=%S/state/storage.env \
+    --env-file=%S/state/email.env \
     ${OPENSIGN_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/opensign-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP opensign-app
