@@ -49,7 +49,7 @@ buildah config --entrypoint=/ \
 	--label="org.nethserver.authorizations=traefik@node:routeadm" \
 	--label="org.nethserver.tcp-ports-demand=2" \
 	--label="org.nethserver.rootfull=0" \
-	--label="org.nethserver.images=docker.io/mongo:8.0.38 docker.io/opensign/opensign:main docker.io/opensign/opensignserver:main" \
+	--label="org.nethserver.images=docker.io/mongo:8.3.17 docker.io/opensign/opensign:main docker.io/opensign/opensignserver:main" \
 	"${container}"
 # Commit the image
 buildah commit "${container}" "${repobase}/${reponame}"
