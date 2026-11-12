@@ -67,7 +67,6 @@ storage_config = {
 agent.write_envfile("storage.env", storage_config)
 # SMTP Configuration
 rdb = agent.redis_connect(use_replica=True)
-smtp_settings = agent.get_smarthost_settings(rdb)
 
 ## Set the default values
 SMTP_HOST = smtp_settings["host"]

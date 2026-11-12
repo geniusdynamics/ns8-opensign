@@ -6,13 +6,13 @@
   "categories": [],
   "authors": [
     {
-      "name": "Martin Bhuong",
-      "email": "martin@genius.ke"
+      "name": "Genius Dynamics",
+      "email": "support@genius.ke"
     }
   ],
   "docs": {
     "documentation_url": "https://docs.opensignlabs.com/",
-    "bug_url": "https://github.com/geniusdynamics/dev",
+    "bug_url": "https://github.com/geniusdynamics/ns8-opensign/issues",
     "code_url": "https://github.com/geniusdynamics/ns8-opensign"
   },
   "source": "ghcr.io/geniusdynamics/opensign"
