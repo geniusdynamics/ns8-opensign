@@ -14,6 +14,7 @@ EnvironmentFile=%E/state/environment
 EnvironmentFile=-%E/state/frontend.env
 WorkingDirectory=%E/state
 Restart=always
+RestartSec=10
 TimeoutStopSec=70
 ExecStartPre=/bin/mkdir -p tmp
 ExecStartPre=/bin/rm -f %t/opensign-app.pid %t/opensign-app.ctr-id
