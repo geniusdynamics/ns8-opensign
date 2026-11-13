@@ -1,9 +1,13 @@
 {
   "name": "opensign",
   "description": {
-    "en": "My opensign module"
+    "en": "OpenSign is an open source document signing platform to prepare, send and sign documents with legally valid signatures.",
+    "it": "OpenSign è una piattaforma open source di firma dei documenti per preparare, inviare e firmare documenti con firme valide."
   },
-  "categories": [],
+  "categories": [
+    "office",
+    "security"
+  ],
   "authors": [
     {
       "name": "Genius Dynamics",

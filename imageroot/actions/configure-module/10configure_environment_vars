@@ -50,8 +50,8 @@ DO_ENDPOINT = data.get("DO_ENDPOINT", "")
 DO_BASEURL = data.get("DO_BASEURL", "")
 DO_ACCESS_KEY_ID = data.get("DO_ACCESS_KEY_ID", "")
 DO_SECRET_ACCESS_KEY = data.get("DO_SECRET_ACCESS_KEY", "")
-DO_REGION = data.get("DO_REGION", "")
-USE_LOCAL = data.get("USE_LOCAL", "")
+DO_REGION = data.get("DO_REGION") or "us-west"
+USE_LOCAL = data.get("USE_LOCAL") or "true"
 # Storage Configuration
 storage_config = {
     "DO_SPACE": DO_SPACE,
@@ -66,6 +66,7 @@ storage_config = {
 agent.write_envfile("storage.env", storage_config)
 # SMTP Configuration
 rdb = agent.redis_connect(use_replica=True)
+smtp_settings = agent.get_smarthost_settings(rdb)
 
 ## Set the default values
 SMTP_HOST = smtp_settings["host"]
