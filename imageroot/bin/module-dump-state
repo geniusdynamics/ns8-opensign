@@ -16,4 +16,6 @@ if ! systemctl --user -q is-active opensign.service; then
     exit 0
 fi
 
-podman exec mongo-app mongodump --archive > opensign.archive
+# MongoDB runs with authentication: log in as the root user of mongo.env,
+# whose variables the container has
+podman exec mongo-app sh -c 'mongodump --username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --archive' > opensign.archive
