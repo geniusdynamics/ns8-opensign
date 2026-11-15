@@ -6,6 +6,7 @@
 #
 
 import json
+import os
 import sys
 import agent
 import secrets
@@ -31,8 +32,11 @@ MONGO_INITDB_ROOT_PASSWORD = data.get(
 )
 MONGO_INITDB_DATABASE = data.get("MONGO_INITDB_DATABASE", "opensign")
 MONGO_INITDB_USERNAME = data.get("MONGO_INITDB_USERNAME", "opensign")
-MONGO_INITDB_PASSWORD = data.get("MONGO_INITDB_PASSWORD", generate_random_password())
-MONGO_HOST = data.get("MONGO_HOST", "mongo-app")
+# The mongo image creates only the root user (MONGO_INITDB_ROOT_*, here
+# named "opensign") in the admin database: OpenSign logs in as that user
+MONGO_INITDB_PASSWORD = MONGO_INITDB_ROOT_PASSWORD
+# The containers share the pod network
+MONGO_HOST = data.get("MONGO_HOST", "127.0.0.1")
 MONGO_PORT = data.get("MONGO_PORT", "27017")
 
 mongo_config = {
@@ -45,10 +49,11 @@ mongo_config = {
     "MONGO_PORT": MONGO_PORT,
 }
 agent.write_envfile("mongo.env", mongo_config)
+os.chmod("mongo.env", 0o600)
 
 APP_ID = data.get("APP_ID", app_id)
 MASTER_KEY = data.get("MASTER_KEY", app_id)
-MONGODB_URI = f"mongodb://{MONGO_INITDB_USERNAME}:{MONGO_INITDB_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_INITDB_DATABASE}"
+MONGODB_URI = f"mongodb://{MONGO_INITDB_USERNAME}:{MONGO_INITDB_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_INITDB_DATABASE}?authSource=admin"
 PARSE_MOUNT = data.get("PARSE_MOUNT", "/app")
 
 # Backend Configuration
@@ -59,6 +64,7 @@ backend_config = {
     "PARSE_MOUNT": PARSE_MOUNT,
 }
 agent.write_envfile("backend-db.env", backend_config)
+os.chmod("backend-db.env", 0o600)
 
 
 PFX_BASE64 = data.get("PFX_BASE64", pfx)
@@ -69,6 +75,5 @@ pfx_config = {
     "PASS_PHRASE": PASS_PHRASE,
 }
 agent.write_envfile("pfx.env", pfx_config)
+os.chmod("pfx.env", 0o600)
 
-
-agent.dump_env()
